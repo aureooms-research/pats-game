@@ -9,9 +9,9 @@
 		var OWNER = 'aureooms-research' ;
 		var REPO = 'pats-game-solutions' ;
 		var URL_TREE = GITHUB_API + '/repos/' + OWNER + '/' + REPO + '/git/trees/master?recursive=true' ;
+		var ROOT = 'https://github.com/aureooms-research/pats-game-solutions/blob/master/' ;
 
 		function Solution ( M , N , R , score , hash , metadata ) {
-			console.debug('new Solution(', M,',',N,',',R,',',score,',',hash,',',metadata,')');
 			this.M = M ;
 			this.N = N ;
 			this.R = R ;
@@ -49,7 +49,7 @@
 				k = move[0];
 				i = move[1];
 				j = move[2];
-				grid[i-1][N-j] = k ;
+				grid[N-j][i-1] = k ;
 			}
 
 			return grid ;
@@ -57,14 +57,14 @@
 		} ;
 
 		Solution.prototype._html_head = function ( ) {
-			console.debug('_html_head');
 
 			var head = {
 				root : document.createElement('div') ,
 				rows :{ root: document.createElement('span') } ,
 				columns :{ root: document.createElement('span') } ,
 				rounds :{ root: document.createElement('span') } ,
-				hash :{ root: document.createElement('span') } ,
+				score :{ root: document.createElement('span') } ,
+				hash :{ root: document.createElement('a') } ,
 				bestknown :{ root: document.createElement('span') } ,
 				optimal :{ root: document.createElement('span') }
 			};
@@ -72,13 +72,16 @@
 			head.rows.root.innerText = this.M ;
 			head.columns.root.innerText = this.N ;
 			head.rounds.root.innerText = this.R ;
+			head.score.root.innerText = this.score ;
 			head.hash.root.innerText = this.hash ;
-			head.bestknown.root.innerText = 'best known' ;
-			head.optimal.root.innerText = 'optimal' ;
+			head.hash.root.href = ROOT + this.metadata.path ;
+			head.bestknown.root.innerText = 'best' ;
+			head.optimal.root.innerText = 'opt' ;
 
 			head.root.appendChild(head.rows.root);
 			head.root.appendChild(head.columns.root);
 			head.root.appendChild(head.rounds.root);
+			head.root.appendChild(head.score.root);
 			head.root.appendChild(head.hash.root);
 			head.root.appendChild(head.bestknown.root);
 			head.root.appendChild(head.optimal.root);
@@ -88,7 +91,6 @@
 		} ;
 
 		Solution.prototype.inithtml = function ( ) {
-			console.debug('inithtml');
 
 			var html = {
 				root : document.createElement('div') ,
@@ -108,7 +110,6 @@
 		};
 
 		Solution.prototype._html_grid_preview = function ( ) {
-			console.debug('_html_grid_preview');
 
 			var grid =  {
 				root : document.createElement('table'),
@@ -165,7 +166,6 @@
 
 		Solution.parse_moves = function ( raw ) {
 
-			console.debug(raw);
 			var i, j, k;
 			var lines = raw.split('\n') ;
 			var header = lines[0].split(' ');
@@ -174,11 +174,9 @@
 			var R = parseInt(header[2]) ;
 			var score = parseInt(lines[1]) ;
 			var _moves = lines.slice(2);
-			console.debug(M,N,R,score,_moves);
 			var moves = [ ] ;
 			for ( var m = 0 ; m < score ; ++m ) {
 				var _move = _moves[m].split(' ');
-				console.log(_move);
 				k = parseInt(_move[0]);
 				i = parseInt(_move[1]);
 				j = parseInt(_move[2]);
@@ -195,8 +193,6 @@
 			var parts = metadata.path.split('/') ;
 			if ( parts.length < 3 ) return null ;
 
-			console.debug('loading' , metadata.path);
-
 			// this is a path to a solution
 			var dimensions = parts[0].split('x') ;
 			var rows = parseInt(dimensions[0]);
@@ -210,7 +206,6 @@
 		} ;
 
 		Solution.prototype.lazyload = function ( ) {
-			console.debug('lazyload');
 
 			var solution = this ;
 
@@ -271,15 +266,25 @@
 						var len = tree.length ;
 						console.debug( len , 'objects in tree');
 						for ( var i = 0 ; i < len ; ++i ) {
+							console.debug( 'loading' , i + 1 , '/' , len ) ;
 							var solution = Solution.from( tree[i] ) ;
 							if ( solution !== null ) {
-								console.debug('ha');
 								loader.solutions.push(solution) ;
-								console.debug('ho');
 								document.getElementById('solutions').appendChild(solution.html.root);
-								console.debug('hi');
 							}
 						}
+
+						var best = 3/2;
+						var n = loader.solutions.length ;
+						console.debug( n , 'solutions loaded');
+						for (var k = 0 ; k < n ; ++k ) {
+							var solution = loader.solutions[k];
+							if ( solution.M === solution.N && solution.N === solution.R ) {
+								var a = Math.log(solution.score) / Math.log(solution.M) ;
+								if ( a > best ) best = a ;
+							}
+						}
+						document.getElementById('exponent').innerText = best ;
 					} else {
 						console.error('There was a problem with the request.');
 						console.debug('event' , event);
@@ -302,8 +307,8 @@
 </head>
 <body>
 	<header>
-		<span>Search for solutions</span>
 		<input id="search" type="text"></input>
+		<span id="exponent"></span>
 	</header>
 	<div id="solutions">
 	</div>
