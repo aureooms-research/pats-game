@@ -1,0 +1,85 @@
+body {
+	background-color: #eee;
+	margin: 0;
+}
+
+header {
+	padding: 10px;
+	background-color: #ccc;
+}
+
+#search::before{
+	content: "Search solution";
+}
+
+#exponent::before{
+	content: "best known exponent:";
+	padding:5px;
+}
+
+#solutions{
+	text-align: center;
+}
+
+.solution {
+	display: inline-block;
+	padding: 10px;
+}
+
+.solution .head {
+	text-align: left;
+	background-color: #777;
+	padding:0.2em;
+	font-family: monospace;
+}
+.solution .body {
+	background-color:#1c1c1c;
+	font-family: Helvetica;
+	padding: .5em;
+}
+
+.solution .body table {
+	margin: 0 auto;
+}
+
+.solution .hash {
+	font-size: 8pt;
+	text-decoration: none;
+	display: block;
+	color: white;
+}
+.solution .score {
+	color:white;
+	background-color:red;
+	border-radius:1em;
+	display: inline-block;
+	height: 1em;
+	padding:0.05em 0.2em;
+	text-align: center;
+}
+.solution tr {
+	height: 1em;
+	margin: 0;
+	padding: 0;
+	line-height: 1em;
+}
+.solution td {
+	color:white;
+	font-weight: bold;
+	width: 1em;
+	height: 1em;
+	text-align: center;
+}
+.solution span{
+	margin-right:5px;
+	font-weight: bold;
+}
+
+.solution td._0::before {
+	display: inline-block;
+	content: '';
+	height:.2em;
+	width:.2em;
+	border-radius:.5em;
+	background-color:#fff;
+}
