@@ -35,6 +35,14 @@ Color.pastel = function ( ) {
 	return Color.random().blend( Color.WHITE ) ;
 } ;
 
+Color.fromhex = function ( hex ) {
+	if ( hex[0] === '#' ) hex = hex.substr(1);
+	var red = parseInt(hex.substr(0,2),16);
+	var green = parseInt(hex.substr(2,2),16);
+	var blue = parseInt(hex.substr(4,2),16);
+	return new Color( red , green , blue ) ;
+} ;
+
 var colorsheet = (function() {
 	// Create the <style> tag
 	var style = document.createElement("style");
@@ -71,6 +79,10 @@ function Solution ( M , N , R , score , hash , metadata ) {
 	this.html = this.inithtml();
 	this.lazyload();
 }
+
+Solution.prototype.dimensions = function ( ) {
+	return this.M + 'x' + this.N + 'x' + this.R ;
+} ;
 
 Solution.prototype.grid = function ( ) {
 
@@ -109,40 +121,65 @@ Solution.prototype._html_head = function ( ) {
 
 	var head = {
 		root : document.createElement('div') ,
-		rows :{ root: document.createElement('span') } ,
-		columns :{ root: document.createElement('span') } ,
-		rounds :{ root: document.createElement('span') } ,
-		score :{ root: document.createElement('span') } ,
-		bestknown :{ root: document.createElement('span') } ,
-		optimal :{ root: document.createElement('span') } ,
+		dimensions : {
+			root : document.createElement('div') ,
+			rows :{ root: document.createElement('span') } ,
+			columns :{ root: document.createElement('span') } ,
+			rounds :{ root: document.createElement('span') }
+		} ,
+		tags : {
+			root : document.createElement('div') ,
+			score :{ root: document.createElement('span') } ,
+			bestknown :{ root: document.createElement('span') } ,
+			optimal :{ root: document.createElement('span') }
+		} ,
 		hash :{ root: document.createElement('a') }
 	};
 
 	head.root.classList.add('head');
 
-	head.rows.root.innerText = this.M ;
-	head.rows.root.classList.add('rows');
-	head.columns.root.innerText = this.N ;
-	head.columns.root.classList.add('columns');
-	head.rounds.root.innerText = this.R ;
-	head.rounds.root.classList.add('rounds');
-	head.score.root.innerText = this.score ;
-	head.score.root.classList.add('score');
-	head.bestknown.root.innerText = 'best' ;
-	head.bestknown.root.classList.add('bestknown');
-	head.optimal.root.innerText = 'opt' ;
-	head.optimal.root.classList.add('optimal');
+	head.dimensions.root.classList.add('dimensions');
+
+	head.dimensions.rows.root.innerText = this.M ;
+	head.dimensions.rows.root.classList.add('dim');
+	head.dimensions.rows.root.classList.add('dim-rows');
+	head.dimensions.columns.root.innerText = this.N ;
+	head.dimensions.columns.root.classList.add('dim');
+	head.dimensions.columns.root.classList.add('dim-columns');
+	head.dimensions.rounds.root.innerText = this.R ;
+	head.dimensions.rounds.root.classList.add('dim');
+	head.dimensions.rounds.root.classList.add('dim-rounds');
+
+	head.tags.root.classList.add('tags');
+
+	head.tags.score.root.innerText = this.score ;
+	head.tags.score.root.classList.add('tag');
+	head.tags.score.root.classList.add('tag-score');
+	head.tags.bestknown.root.innerText = 'best' ;
+	head.tags.bestknown.root.classList.add('tag');
+	head.tags.bestknown.root.classList.add('tag-best');
+	head.tags.optimal.root.innerText = 'opt' ;
+	head.tags.optimal.root.classList.add('tag');
+	head.tags.optimal.root.classList.add('tag-opt');
+
 	head.hash.root.innerText = this.hash ;
 	head.hash.root.href = ROOT + this.metadata.path ;
+	head.hash.root.target = '_BLANK' ;
 	head.hash.root.classList.add('hash');
 
-	head.root.appendChild(head.rows.root);
-	head.root.appendChild(head.columns.root);
-	head.root.appendChild(head.rounds.root);
-	head.root.appendChild(head.score.root);
-	head.root.appendChild(head.bestknown.root);
-	head.root.appendChild(head.optimal.root);
+	head.dimensions.root.appendChild(head.dimensions.rows.root);
+	head.dimensions.root.appendChild(head.dimensions.columns.root);
+	head.dimensions.root.appendChild(head.dimensions.rounds.root);
+
+	head.tags.root.appendChild(head.tags.score.root);
+	head.tags.root.appendChild(head.tags.bestknown.root);
+	head.tags.root.appendChild(head.tags.optimal.root);
+
+	head.root.appendChild(head.dimensions.root);
+	head.root.appendChild(head.tags.root);
 	head.root.appendChild(head.hash.root);
+
+	head.root.style.backgroundColor = Color.fromhex( this.hash.substr( -6 ) ).blend( Color.WHITE ).css();
 
 	return head;
 
@@ -301,7 +338,7 @@ Solution.prototype.lazyload = function ( ) {
 				console.debug( 'event', event);
 			}
 		}
-	}
+	} ;
 
 	var request = new XMLHttpRequest();
 	request.onreadystatechange = onreadystatechange ;
@@ -316,13 +353,62 @@ var Loader = function ( ) {
 	this.solutions = [ ] ;
 } ;
 
+Loader.prototype.update_exponent = function ( ){
+	var best = 3/2 ;
+	var html = '3/2 = 1.5' ;
+	var n = this.solutions.length ;
+	for (var k = 0 ; k < n ; ++k ) {
+		var solution = this.solutions[k];
+		var d = solution.M ;
+		if ( solution.N === d && solution.R === d ) {
+			var s = solution.score;
+			var a = Math.log(s) / Math.log(d) ;
+			if ( a >= best ) {
+				best = a ;
+				html = 'log<sub>'+d+'</sub> '+s+' = ' + a;
+			}
+		}
+	}
+	document.getElementById('exponent').innerHTML = html ;
+} ;
+
+Loader.prototype.update_best = function ( ) {
+	var solution, k;
+	var best = { } ;
+	var n = this.solutions.length ;
+
+	for (k = 0 ; k < n ; ++k ) {
+
+		solution = this.solutions[k];
+
+		var id = solution.dimensions() ;
+
+		if ( best[id] === undefined || solution.score > best[id] ) {
+			best[id] = solution.score ;
+		}
+
+	}
+
+	for (k = 0 ; k < n ; ++k ) {
+
+		solution = this.solutions[k];
+
+		if ( solution.score === best[solution.dimensions()] ) {
+			solution.html.root.classList.add( 'best' ) ;
+		}
+
+	}
+
+} ;
+
 Loader.prototype.update = function ( ) {
 
 	var loader = this ;
 	loader.solutions.splice(0) ;
 
 	var onreadystatechange = function ( event ) {
-		 if (event.target.readyState === XMLHttpRequest.DONE) {
+		var solution;
+		if (event.target.readyState === XMLHttpRequest.DONE) {
 			if (event.target.status === 200) {
 				var raw = event.target.responseText ;
 				var object = JSON.parse(raw);
@@ -336,24 +422,17 @@ Loader.prototype.update = function ( ) {
 				console.debug( len , 'objects in tree');
 				for ( var i = 0 ; i < len ; ++i ) {
 					console.debug( 'loading' , i + 1 , '/' , len ) ;
-					var solution = Solution.from( tree[i] ) ;
+					solution = Solution.from( tree[i] ) ;
 					if ( solution !== null ) {
 						loader.solutions.push(solution) ;
 						document.getElementById('solutions').appendChild(solution.html.root);
 					}
 				}
 
-				var best = 3/2;
-				var n = loader.solutions.length ;
-				console.debug( n , 'solutions loaded');
-				for (var k = 0 ; k < n ; ++k ) {
-					var solution = loader.solutions[k];
-					if ( solution.M === solution.N && solution.N === solution.R ) {
-						var a = Math.log(solution.score) / Math.log(solution.M) ;
-						if ( a > best ) best = a ;
-					}
-				}
-				document.getElementById('exponent').innerText = best ;
+				console.debug( loader.solutions.length , 'solutions loaded');
+				loader.update_exponent( );
+				loader.update_best( );
+
 			} else {
 				console.error('There was a problem with the request.');
 				console.debug('event' , event);

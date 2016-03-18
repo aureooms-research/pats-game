@@ -3,83 +3,150 @@ body {
 	margin: 0;
 }
 
+#header-container {
+	width: 100%;
+	display: block;
+	position: fixed;
+}
+
 header {
-	padding: 10px;
-	background-color: #ccc;
+	font-family: Helvetica;
+	padding: 1em .8em;
+	background-color: #1c1c1c;
+	color: #eee;
 }
 
-#search::before{
-	content: "Search solution";
+header > #search{
+	border: none;
+	border-radius:1em;
+	height:2em;
+	width: 20em;
+	padding:.4em 1em;
 }
 
-#exponent::before{
-	content: "best known exponent:";
-	padding:5px;
+header > #exponent {
+	float:right;
+	font-weight: bold;
+}
+
+header > #exponent::before{
+	content: "best exponent";
+	padding:1em;
 }
 
 #solutions{
 	text-align: center;
+	padding-top: 5em;
+	padding-bottom: 4em;
 }
 
-.solution {
+#solutions > .solution {
 	display: inline-block;
 	padding: 10px;
 }
 
-.solution .head {
+#solutions > .solution .head {
 	text-align: left;
-	background-color: #777;
-	padding:0.2em;
+	padding:0.4em;
 	font-family: monospace;
-}
-.solution .body {
-	background-color:#1c1c1c;
-	font-family: Helvetica;
-	padding: .5em;
+	color: #1c1c1c;
 }
 
-.solution .body table {
-	margin: 0 auto;
-}
-
-.solution .hash {
+#solutions > .solution > .head > .hash {
 	font-size: 8pt;
 	text-decoration: none;
 	display: block;
-	color: white;
+	color: #1c1c1c;
 }
-.solution .score {
-	color:white;
-	background-color:red;
-	border-radius:1em;
-	display: inline-block;
-	height: 1em;
-	padding:0.05em 0.2em;
-	text-align: center;
+
+#solutions > .solution > .head > .hash,
+#solutions > .solution > .head > .dimensions,
+#solutions > .solution > .head > .tags > .tag
+{
+	padding: 0.2em 0.5em;
 }
-.solution tr {
+
+#solutions > .solution .body {
+	background-color:#1c1c1c;
+	font-family: Helvetica;
+	padding: .7em;
+}
+
+#solutions > .solution .body table {
+	margin: 0 auto;
+}
+
+#solutions > .solution tr {
 	height: 1em;
 	margin: 0;
 	padding: 0;
 	line-height: 1em;
 }
-.solution td {
+#solutions > .solution td {
 	color:white;
 	font-weight: bold;
 	width: 1em;
 	height: 1em;
 	text-align: center;
 }
-.solution span{
+#solutions > .solution span{
 	margin-right:5px;
 	font-weight: bold;
 }
 
-.solution td._0::before {
+#solutions > .solution td._0::before {
 	display: inline-block;
 	content: '';
 	height:.2em;
 	width:.2em;
 	border-radius:.5em;
 	background-color:#fff;
+}
+
+
+#solutions > .solution > .head > .dimensions {
+	display: inline-block;
+}
+
+#solutions > .solution > .head > .tags {
+	float:right;
+}
+
+#solutions > .solution > .head > .tags > .tag {
+	border-radius:1em;
+	display: inline-block;
+	height: 1em;
+	text-align: center;
+}
+
+#solutions > .solution > .head > .tags > .tag-best {
+	display:none ;
+	background-color: rgb(255,191,127);
+}
+
+#solutions > .solution.best > .head > .tags > .tag-best {
+	display: inline;
+}
+
+#solutions > .solution > .head > .tags > .tag-opt {
+	background-color: rgb(255,255,127);
+}
+
+#solutions > .solution > .head > .tags > .tag-score {
+	background-color:rgb(255,127,127);
+}
+
+#solutions > .solution > .head > .dimensions > .dim::before {
+	margin-right:.2em;
+}
+#solutions > .solution > .head > .dimensions > .dim-rows::before {
+	content: "rows";
+}
+
+#solutions > .solution > .head > .dimensions > .dim-columns::before {
+	content: "columns";
+}
+
+#solutions > .solution > .head > .dimensions > .dim-rounds::before {
+	content: "rounds";
 }
