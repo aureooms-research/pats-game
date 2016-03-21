@@ -123,17 +123,19 @@ body {
 	color: #eee;
 	font-weight: bold;
 	margin-bottom: 1em;
-	position:relative;
 	display:block;
 }
 
 #search-output > .container > .output > .header > .header-count {
 	background-color: rgb(255,255,127);
-	position:relative;
 	display:inline-block;
 	padding:0;
 	margin:0;
 	color: #1c1c1c;
+}
+
+#search-output > .container > .output > .header > .header-query{
+	background-color: #1c1c1c;
 }
 
 #search-output > .container > .output > .header > .header-query,
@@ -144,7 +146,6 @@ body {
 }
 
 #search-output > .container > .output > .header > .header-interpretation {
-	font-style: italic;
 }
 
 #search-output > .container > .output > .solutions{
