@@ -16,6 +16,8 @@ SolutionsIndex.Query = function ( index , query , predicate , solutions ) {
 
 SolutionsIndex.Query.prototype.update_dom = function ( ) {
 
+	document.getElementById('main').classList.remove( 'help' );
+
 	var solutions = this.solutions ;
 	var index = this.index;
 
@@ -70,25 +72,15 @@ SolutionsIndex.Help = function ( index , query ) {
 } ;
 
 SolutionsIndex.Help.prototype.update_dom = function ( ) {
+
 	var index = this.index;
 
 	var container = document.createElement('div');
-	container.classList.add( 'container');
-	var output = document.createElement('div');
-	output.classList.add( 'output');
-	var header = document.createElement('div');
-	header.classList.add( 'header');
-	var _solutions = document.createElement('div');
-	_solutions.classList.add( 'solutions' );
-
-	header.innerText = this.query + ' (HELP) [0]';
-
-	output.appendChild( header ) ;
-	output.appendChild( _solutions ) ;
-	container.appendChild( output ) ;
-
+	container.classList.add( 'container' );
 	document.getElementById('search-output').replaceChild(container,index.output.container.root);
 	index.output.container.root = container;
+
+	document.getElementById('main').classList.add( 'help' );
 
 } ;
 

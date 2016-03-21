@@ -6,6 +6,7 @@ html {
 
 body {
 	background-color: #eee;
+	color: #1c1c1c;
     margin: 0 0 1em; /* bottom = log height */
 }
 
@@ -59,8 +60,44 @@ body {
 	padding-bottom: 4em;
 }
 
+
+#main.help > #help {
+	display: block ;
+}
+
+#help {
+	display: none;
+	font-size: 1.5em;
+	padding: 0 4em;
+}
+
+#help > p.note {
+}
+
+#help > p.note::before {
+	content: "NB";
+	margin-right: 1em;
+	font-style: italic;
+}
+
+#help > ul.options > .option > .example {
+	font-weight: bold;
+	font-family: monospace;
+	background-color: #ccc;
+	padding: .1em;
+	margin-right: .5em;
+}
+
+
+#help b.emph {
+	font-weight: bold;
+	font-family: monospace;
+	background-color: #ccc;
+	padding: .1em;
+}
+
 #search-output {
-	padding: 0px 4em;
+	padding: 0 4em;
 }
 
 #search-output > .container > .no-results {
@@ -80,19 +117,6 @@ body {
 	font-weight: normal;
 }
 
-#search-output > .container > .error {
-	color: #f00;
-	font-weight: bold;
-	font-size: 2em;
-}
-#search-output > .container > .interpretation {
-	font-size: 1.5em;
-
-}
-#search-output > .container > .help {
-	font-size: 1.5em;
-
-}
 #search-output > .container > .output > .header {
 	font-size: 1.5em;
 	background-color: #ccc;
