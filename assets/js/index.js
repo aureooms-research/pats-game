@@ -131,9 +131,21 @@ function Solution ( M , N , R , score , sat , hash , metadata ) {
 	this.hash = hash ;
 	this.metadata = metadata ;
 	this.moves = null ;
-	this.html = this.inithtml();
-	if ( this.sat ) this.lazyload();
+	this._html = null ;
+	this.opt = false ;
+	this.best = false ;
 }
+
+Solution.prototype.html = function ( ) {
+
+	if ( this._html === null ) {
+		this._html = this.inithtml();
+		if ( this.sat ) this.lazyload( ) ;
+	}
+
+	return this._html ;
+
+} ;
 
 Solution.prototype.dimensions = function ( ) {
 	return this.M + 'x' + this.N + 'x' + this.R ;
@@ -146,7 +158,7 @@ Solution.prototype.url = function ( ) {
 Solution.prototype.grid = function ( ) {
 
 	if ( this.moves === null ) {
-		console.warn( 'cannot build grid: moves not loaded' );
+		console.error( 'cannot build grid: moves not loaded' );
 		return null ;
 	}
 
@@ -406,8 +418,8 @@ Solution.prototype.lazyload = function ( ) {
 				var moves = Solution.parse_moves( raw ) ;
 				solution.moves = moves ;
 				var grid = solution._html_grid( ) ;
-				solution.html.body.root.replaceChild(grid.root, solution.html.body.grid.root);
-				solution.html.body.grid = grid ;
+				solution.html().body.root.replaceChild(grid.root, solution.html().body.grid.root);
+				solution.html().body.grid = grid ;
 			}
 		}
 	} ;
@@ -422,20 +434,22 @@ Solution.prototype.lazyload = function ( ) {
 
 
 var Loader = function ( ) {
-	this.solutions = { root : document.createElement( 'div' ) , list : [ ] } ;
+
+	this.output = { container : { root : document.createElement( 'div' ) } } ;
+	this.solutions = { all : [ ] } ;
 	this.lb = { } ;
 	this.ub = { } ;
 
-	this.solutions.root.classList.add( 'solutions' );
-	document.getElementById('solutions-container').appendChild(this.solutions.root);
+	this.output.container.root.classList.add( 'solutions' );
+	document.getElementById('search-output').appendChild(this.output.container.root);
 } ;
 
 Loader.prototype.update_exponent = function ( ){
 	var best = 3/2 ;
 	var html = '3/2 = 1.5' ;
-	var n = this.solutions.list.length ;
+	var n = this.solutions.all.length ;
 	for (var k = 0 ; k < n ; ++k ) {
-		var solution = this.solutions.list[k];
+		var solution = this.solutions.all[k];
 		var d = solution.M ;
 		if ( d > 1 && solution.sat && solution.N === d && solution.R === d ) {
 			var s = solution.score;
@@ -451,11 +465,11 @@ Loader.prototype.update_exponent = function ( ){
 
 Loader.prototype.update_ub = function ( ) {
 	var ub = this.ub ;
-	var n = this.solutions.list.length ;
+	var n = this.solutions.all.length ;
 
 	for (var k = 0 ; k < n ; ++k ) {
 
-		var solution = this.solutions.list[k];
+		var solution = this.solutions.all[k];
 
 		if ( solution.sat ) continue ;
 
@@ -471,11 +485,11 @@ Loader.prototype.update_ub = function ( ) {
 
 Loader.prototype.update_lb = function ( ) {
 	var lb = this.lb ;
-	var n = this.solutions.list.length ;
+	var n = this.solutions.all.length ;
 
 	for (var k = 0 ; k < n ; ++k ) {
 
-		var solution = this.solutions.list[k];
+		var solution = this.solutions.all[k];
 
 		if ( !solution.sat ) continue ;
 
@@ -491,21 +505,24 @@ Loader.prototype.update_lb = function ( ) {
 
 Loader.prototype.update_tags = function ( ) {
 
-	var n = this.solutions.list.length ;
+	var n = this.solutions.all.length ;
 	for (var k = 0 ; k < n ; ++k ) {
 
-		var solution = this.solutions.list[k];
+		var solution = this.solutions.all[k];
 
 		if ( !solution.sat ) {
-			solution.html.root.classList.add( 'unsat' ) ;
+			solution.html().root.classList.add( 'unsat' ) ;
 		}
 
 		else if ( solution.score === this.ub[solution.dimensions()] ) {
-			solution.html.root.classList.add( 'opt' ) ;
+			solution.opt = true ;
+			solution.best = true ;
+			solution.html().root.classList.add( 'opt' ) ;
 		}
 
 		else if ( solution.score === this.lb[solution.dimensions()] ) {
-			solution.html.root.classList.add( 'best' ) ;
+			solution.best = true ;
+			solution.html().root.classList.add( 'best' ) ;
 		}
 
 	}
@@ -513,17 +530,28 @@ Loader.prototype.update_tags = function ( ) {
 } ;
 
 Loader.prototype.update_dom = function ( ) {
+	var container = document.createElement('div');
+	container.classList.add( 'container');
+	var output = document.createElement('div');
+	output.classList.add( 'output');
+	var header = document.createElement('div');
+	header.classList.add( 'header');
+	header.innerText = 'All solutions' ;
 	var solutions = document.createElement('div');
 	solutions.classList.add( 'solutions' );
 
-	var n = this.solutions.list.length ;
+	var n = this.solutions.all.length ;
 	for (var k = 0 ; k < n ; ++k ) {
-		var solution = this.solutions.list[k];
-		solutions.appendChild( solution.html.root ) ;
+		var solution = this.solutions.all[k];
+		solutions.appendChild( solution.html().root ) ;
 	}
 
-	document.getElementById('solutions-container').replaceChild(solutions,this.solutions.root);
-	this.solutions.root = solutions;
+	output.appendChild( header ) ;
+	output.appendChild( solutions ) ;
+	container.appendChild( output ) ;
+
+	document.getElementById('search-output').replaceChild(container,this.output.container.root);
+	this.output.container.root = container;
 
 } ;
 
@@ -535,7 +563,7 @@ Loader.prototype.update = function ( ) {
 	log.classList.add('status-pending');
 
 	var loader = this ;
-	loader.solutions.list.splice(0) ;
+	loader.solutions.all.splice(0) ;
 
 	var onreadystatechange = function ( event ) {
 		var solution;
@@ -556,11 +584,11 @@ Loader.prototype.update = function ( ) {
 					console.debug( 'loading' , i + 1 , '/' , len ) ;
 					solution = Solution.from( tree[i] ) ;
 					if ( solution !== null ) {
-						loader.solutions.list.push(solution) ;
+						loader.solutions.all.push(solution) ;
 					}
 				}
 
-				console.debug( loader.solutions.list.length , 'solutions loaded');
+				console.debug( loader.solutions.all.length , 'solutions loaded');
 				loader.update_exponent( );
 				loader.update_lb( );
 				loader.update_ub( );
@@ -576,6 +604,45 @@ Loader.prototype.update = function ( ) {
 	request.onreadystatechange = onreadystatechange ;
 	request.open('GET', URL_TREE);
 	request.send();
+
+} ;
+
+function SolutionsIndex ( ) {
+
+}
+
+SolutionsIndex.prototype._query = function ( query ) {
+
+	var formula = predicate.truth ;
+
+	var parts = query.split(' ');
+	var len = parts.length ;
+	for ( var k = 0 ; k < len ; ++k ) {
+
+		var part = parts[k] ;
+
+		if ( part === 'h' ) {
+			return SolutionsIndex.HELP ;
+		}
+
+		else if ( part === 'o' ) {
+			formula = formula.conjunction( function ( s ) { return s.opt ; } ) ;
+		}
+
+		else if ( part === 'b' ) {
+			formula = formula.conjunction( function ( s ) { return s.best ; } ) ;
+		}
+
+		else if ( part === 'u' ) {
+			formula = formula.conjunction( function ( s ) { return !s.sat ; } ) ;
+		}
+
+		else {
+			formula = formula.conjunction( ( function ( sub ) { return function ( s ) { return s.dimensions().indexOf(sub) >= 0 ; } ; } ) ( part ) ) ;
+		}
+	}
+
+	return SolutionsIndex.QUERY( formula ) ;
 
 } ;
 
