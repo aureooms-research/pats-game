@@ -64,13 +64,20 @@ body {
 }
 
 #search-output > .container > .no-results {
-	color: #777;
+	background-color: rgb(255,255,127);
+	margin-top: 3em;
+	text-align: center;
+	color: #1c1c1c;
 	font-size: 2em;
+	font-weight: bold;
+	padding: 1em;
 }
 
 #search-output > .container > .no-results::before{
 	content: "No results for query";
-	margin-right:1em;
+	display: block;
+	margin-bottom: 1em;
+	font-weight: normal;
 }
 
 #search-output > .container > .error {

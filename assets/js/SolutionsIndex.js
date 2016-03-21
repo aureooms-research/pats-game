@@ -21,10 +21,8 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 
 	var container = document.createElement('div');
 	container.classList.add( 'container');
-	var output = document.createElement('div');
-	output.classList.add( 'output');
-	var header = document.createElement('div');
-	header.classList.add( 'header');
+
+
 	var _solutions = document.createElement('div');
 	_solutions.classList.add( 'solutions' );
 
@@ -38,11 +36,28 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 		}
 	}
 
-	header.innerText = this.query + ' ' + this.predicate.description( ) + ' [' + x +']';
+	if ( x > 0 ) {
 
-	output.appendChild( header ) ;
-	output.appendChild( _solutions ) ;
-	container.appendChild( output ) ;
+		var output = document.createElement('div');
+		output.classList.add( 'output');
+		var header = document.createElement('div');
+		header.classList.add( 'header' );
+		header.innerText = this.query + ' ' + this.predicate.description( ) + ' [' + x +']';
+		output.appendChild( header ) ;
+		output.appendChild( _solutions ) ;
+		container.appendChild( output ) ;
+
+	}
+
+	else {
+
+		var noresults = document.createElement('div');
+		noresults.classList.add( 'no-results');
+		noresults.innerText = this.query + ' ' + this.predicate.description( ) ;
+		container.appendChild( noresults ) ;
+
+	}
+
 
 	document.getElementById('search-output').replaceChild(container,index.output.container.root);
 	index.output.container.root = container;
