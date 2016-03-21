@@ -15,7 +15,6 @@ SolutionsIndex.Query = function ( index , query , predicate , solutions ) {
 } ;
 
 SolutionsIndex.Query.prototype.update_dom = function ( ) {
-	console.debug( 'update_dom') ;
 
 	var solutions = this.solutions ;
 	var index = this.index;
@@ -45,10 +44,8 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 	output.appendChild( _solutions ) ;
 	container.appendChild( output ) ;
 
-	console.debug( 'update_dom') ;
 	document.getElementById('search-output').replaceChild(container,index.output.container.root);
 	index.output.container.root = container;
-	console.debug( 'update_dom') ;
 
 } ;
 
@@ -81,9 +78,8 @@ SolutionsIndex.Help.prototype.update_dom = function ( ) {
 } ;
 
 
-SolutionsIndex.prototype.update = function ( solutions ) {
+SolutionsIndex.prototype.update = function ( query , solutions ) {
 	this.solutions.all = solutions ;
-	var query = this.query( document.getElementById( 'search' ).value ) ;
 	this.query( query ) ;
 } ;
 
@@ -94,41 +90,42 @@ SolutionsIndex.prototype.query = function ( query ) {
 
 SolutionsIndex.prototype._query = function ( query , solutions ) {
 
-	console.debug( '_query') ;
 	var predicate;
 	var formula = new Truth( ) ;
-	console.debug( '_query') ;
 
 	var parts = query.split(' ');
 	var len = parts.length ;
 	for ( var k = 0 ; k < len ; ++k ) {
 
-		var part = parts[k] ;
+		var part = parts[k].toLowerCase() ;
+		var neg = false ;
+
+		while ( part.length > 0 && part[0] === '!' ) {
+			neg = !neg ;
+			part = part.substr(1);
+		}
 
 		if ( part === '' ) {
 			continue ;
 		}
 
-		else if ( part === 'h' ) {
+		else if ( 'help'.indexOf( part ) === 0 ) {
 			return new SolutionsIndex.Help( this , query ) ;
 		}
 
-		else if ( part === 'o' ) {
+		else if ( 'optimal'.indexOf( part ) === 0 ) {
 			predicate = new Predicate(function ( s ) { return s.opt ; } , 'OPT' ) ;
-			formula = formula.and( predicate ) ;
 		}
 
-		else if ( part === 'b' ) {
+		else if ( 'best'.indexOf( part ) === 0 ) {
 			predicate = new Predicate( function ( s ) { return s.best ; } , 'BEST' ) ;
-			formula = formula.and( predicate ) ;
 		}
 
-		else if ( part === 'u' ) {
+		else if ( 'unsat'.indexOf( part ) === 0 ) {
 			predicate = new Predicate( function ( s ) { return !s.sat ; } , 'UNSAT' ) ;
-			formula = formula.and( predicate ) ;
 		}
 
-		else {
+		else if ( part.indexOf( 'x' ) >= 0 ){
 			predicate = new Predicate(
 				( function ( sub ) {
 					return function ( s ) {
@@ -136,8 +133,22 @@ SolutionsIndex.prototype._query = function ( query , solutions ) {
 					} ;
 				} ) ( part ) , '( DIM CONTAINS ' + part + ' )'
 			) ;
-			formula = formula.and( predicate ) ;
 		}
+
+		else {
+			predicate = new Predicate(
+				( function ( sub ) {
+					return function ( s ) {
+						return s.hash.indexOf(sub) >= 0 ;
+					} ;
+				} ) ( part ) , '( HASH CONTAINS ' + part + ' )'
+			) ;
+		}
+
+		if ( neg ) predicate = predicate.not( ) ;
+
+		formula = formula.and( predicate ) ;
+
 	}
 
 	return new SolutionsIndex.Query( this , query , formula , solutions ) ;

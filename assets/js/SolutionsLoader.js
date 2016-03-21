@@ -9,6 +9,7 @@ function SolutionsLoader ( ) {
 }
 
 SolutionsLoader.prototype.update_exponent = function ( ){
+	var which = 'None' ;
 	var best = 3/2 ;
 	var html = '3/2 = 1.5' ;
 	var n = this.solutions.all.length ;
@@ -21,10 +22,12 @@ SolutionsLoader.prototype.update_exponent = function ( ){
 			if ( a >= best ) {
 				best = a ;
 				html = 'log<sub>'+d+'</sub> '+s+' = ' + a;
+				which = solution.hash ;
 			}
 		}
 	}
 	document.getElementById('exponent').innerHTML = html ;
+	document.getElementById('exponent').title = which ;
 } ;
 
 SolutionsLoader.prototype.update_ub = function ( ) {
@@ -67,7 +70,7 @@ SolutionsLoader.prototype.update_lb = function ( ) {
 
 } ;
 
-SolutionsLoader.prototype.update_tags = function ( ) {
+SolutionsLoader.prototype.update_attr = function ( ) {
 
 	var n = this.solutions.all.length ;
 	for (var k = 0 ; k < n ; ++k ) {
@@ -75,18 +78,16 @@ SolutionsLoader.prototype.update_tags = function ( ) {
 		var solution = this.solutions.all[k];
 
 		if ( !solution.sat ) {
-			solution.html().root.classList.add( 'unsat' ) ;
+			continue;
 		}
 
 		else if ( solution.score === this.ub[solution.dimensions()] ) {
 			solution.opt = true ;
 			solution.best = true ;
-			solution.html().root.classList.add( 'opt' ) ;
 		}
 
 		else if ( solution.score === this.lb[solution.dimensions()] ) {
 			solution.best = true ;
-			solution.html().root.classList.add( 'best' ) ;
 		}
 
 	}
@@ -130,7 +131,7 @@ SolutionsLoader.prototype.update = function ( callback ) {
 				loader.update_exponent( );
 				loader.update_lb( );
 				loader.update_ub( );
-				loader.update_tags( );
+				loader.update_attr( );
 
 				callback( loader.solutions.all ) ;
 

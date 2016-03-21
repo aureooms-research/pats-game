@@ -105,7 +105,7 @@ Disjunction.prototype.description = function ( ) {
 	return '( ' + this.left.description() + ' OR ' + this.right.description() + ' )' ;
 } ;
 
-Disjuncton.prototype.query = function ( subject ) {
+Disjunction.prototype.query = function ( subject ) {
 	return this.left.query( subject ) || this.right.query( subject ) ;
 } ;
 

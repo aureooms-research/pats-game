@@ -159,6 +159,10 @@ Solution.prototype.inithtml = function ( ) {
 	html.body.root.appendChild(html.body.grid.root);
 	html.body.root.classList.add('body');
 
+	if ( !this.sat ) html.root.classList.add( 'unsat' ) ;
+	else if ( this.opt ) html.root.classList.add( 'opt' ) ;
+	else if ( this.best ) html.root.classList.add( 'best' ) ;
+
 	return html ;
 
 };
