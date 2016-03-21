@@ -233,6 +233,7 @@ body {
 	background-color: rgb(255,255,127);
 }
 
+#log-last ,
 #log-status ,
 #log-status-text ,
 #log-message ,
@@ -248,6 +249,7 @@ body {
 	font-weight: bold;
 }
 
+#log.status-pending #log-last ,
 #log.status-pending #log-status ,
 #log.status-pending #log-status-text ,
 #log.status-pending #log-limit ,
@@ -261,6 +263,7 @@ body {
 	display: none;
 }
 
+#log-last::before ,
 #log-status::before ,
 #log-status-text::before ,
 #log-message::before ,
@@ -273,6 +276,9 @@ body {
 }
 
 
+#log-last::before {
+	content: "last request at";
+}
 #log-status::before {
 	content: "status";
 }
