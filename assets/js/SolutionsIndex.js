@@ -64,9 +64,19 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 
 	else {
 
+		var query = document.createElement('div');
+		query.classList.add( 'query');
+		query.innerText = this.query ;
+
+		var interpretation = document.createElement('div');
+		interpretation.classList.add( 'interpretation');
+		interpretation.innerText = this.predicate.description( ) ;
+
 		var noresults = document.createElement('div');
 		noresults.classList.add( 'no-results');
-		noresults.innerText = this.query + ' ' + this.predicate.description( ) ;
+		noresults.appendChild( query ) ;
+		noresults.appendChild( interpretation ) ;
+
 		container.appendChild( noresults ) ;
 
 	}

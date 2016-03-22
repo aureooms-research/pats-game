@@ -112,11 +112,28 @@ body {
 	padding: 1em;
 }
 
-#search-output > .container > .no-results::before{
+#search-output > .container > .no-results > .query::before{
 	content: "No results for query";
 	display: block;
 	margin-bottom: 1em;
 	font-weight: normal;
+}
+
+#search-output > .container > .no-results > .query{
+	content: "No results for query";
+	margin-bottom: 1em;
+}
+
+#search-output > .container > .no-results > .interpretation::before{
+	content: "Interpreted as";
+	display: block;
+	margin-bottom: 1em;
+	font-weight: normal;
+}
+
+#search-output > .container > .no-results > .interpretation{
+	display: block;
+	margin-bottom: 1em;
 }
 
 #search-output > .container > .output > .header {
