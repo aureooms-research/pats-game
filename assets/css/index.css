@@ -121,7 +121,7 @@ body {
 
 #search-output > .container > .output > .header {
 	font-size: 1.5em;
-	background-color: #ccc;
+	background-color: #1c1c1c;
 	color: #eee;
 	font-weight: bold;
 	margin-bottom: 1em;
@@ -138,6 +138,8 @@ body {
 
 #search-output > .container > .output > .header > .header-query{
 	background-color: #1c1c1c;
+	display:inline-block;
+	text-align: right;
 }
 
 #search-output > .container > .output > .header > .header-query,
@@ -148,6 +150,8 @@ body {
 }
 
 #search-output > .container > .output > .header > .header-interpretation {
+	display: block;
+	background-color: #ccc;
 }
 
 #search-output > .container > .output > .solutions{
