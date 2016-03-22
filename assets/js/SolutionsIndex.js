@@ -107,8 +107,20 @@ SolutionsIndex.Help.prototype.update_dom = function ( ) {
 
 
 SolutionsIndex.prototype.update = function ( query , solutions ) {
+
 	this.solutions.all = solutions ;
+
+	solutions.sort( function ( a , b ) {
+		if ( a.M !== b.M ) return a.M - b.M ;
+		if ( a.N !== b.N ) return a.N - b.N ;
+		if ( a.R !== b.R ) return a.R - b.R ;
+		if ( a.score !== b.score ) return a.score - b.score ;
+		if ( a.hash !== b.hash ) return a.hash < b.hash ? -1 : 1 ;
+		return 0;
+	} ) ;
+
 	this.query( query ) ;
+
 } ;
 
 SolutionsIndex.prototype.query = function ( query ) {
