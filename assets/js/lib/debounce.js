@@ -1,3 +1,4 @@
+'use strict' ;
 
 function debounce ( fn , delay ) {
 

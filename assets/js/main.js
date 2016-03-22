@@ -8,21 +8,37 @@ window.addEventListener( 'load' , function ( ) {
 	var loader = new SolutionsLoader();
 	var index = new SolutionsIndex();
 
-	var update = function ( ) {
+	var onupdate = function ( ) {
+		console.debug('event update') ;
 		loader.update( function ( solutions ) {
-			var query = document.getElementById( 'search' ).value ;
+			var query = hashget().q ;
 			index.update( query , solutions ) ;
 		} ) ;
 	} ;
 
-	update();
-	window.setInterval( update , DELAY_UPDATE ) ;
-
-	var query = function ( ) {
+	var oninput = function ( ) {
+		console.debug('event input') ;
+		var args = hashget() ;
 		var q = document.getElementById( 'search' ).value ;
-		index.query( q ) ;
+		hashset( Object.assign( args , { q : q } ) ) ;
+		//index.query( q ) ; // NOT NEEDED SINCE WE TRIGGER A HASHCHANGE EVENT
 	} ;
 
-	document.getElementById( 'search' ).addEventListener( 'input' , debounce( query , DELAY_QUERY ) ) ;
+	var onhashchange = function ( ) {
+		console.debug('event hashchange') ;
+		var q = hashget().q ;
+		document.getElementById( 'search' ).value = q ;
+		index.query( q );
+	} ;
+
+	document.getElementById( 'search' ).value = hashget().q ;
+
+	onupdate();
+
+	window.setInterval( onupdate , DELAY_UPDATE ) ;
+
+	window.addEventListener( 'hashchange' , onhashchange ) ;
+
+	document.getElementById( 'search' ).addEventListener( 'input' , debounce( oninput , DELAY_QUERY ) ) ;
 
 } ) ;

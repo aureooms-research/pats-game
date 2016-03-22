@@ -1,3 +1,5 @@
+'use strict' ;
+
 function AbstractPredicate ( ) { }
 
 AbstractPredicate.prototype.and = function ( other ) {

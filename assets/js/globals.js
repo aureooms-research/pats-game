@@ -1,3 +1,5 @@
+'use strict' ;
+
 var C = 0 ;
 var GITHUB_API = 'https://api.github.com' ;
 var OWNER = 'aureooms-research' ;

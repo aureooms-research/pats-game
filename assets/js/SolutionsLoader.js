@@ -28,6 +28,7 @@ SolutionsLoader.prototype.update_exponent = function ( ){
 	}
 	document.getElementById('exponent').innerHTML = html ;
 	document.getElementById('exponent').title = which ;
+	document.getElementById('exponent').href = hashpart( { q : which } ) ;
 } ;
 
 SolutionsLoader.prototype.update_ub = function ( ) {
