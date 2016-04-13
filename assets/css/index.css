@@ -138,6 +138,9 @@ body {
 	display: block;
 	margin-bottom: 1em;
 	font-weight: normal;
+	margin-top: 2em;
+	background: rgb(255,128,128);
+	padding: 1em;
 }
 
 #search-output > .container > .no-results > .interpretation{
