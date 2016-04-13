@@ -5,13 +5,13 @@ function logGitHubAPIRequest ( event ) {
 	var log = document.getElementById('log') ;
 	log.classList.remove('status-pending');
 
-	var last = (new Date()).toLocaleFormat();
+	var last = (new Date()).toString();
 	var status = event.target.status ;
 	var statusText = event.target.statusText ;
 	var reset = event.target.getResponseHeader('X-RateLimit-Reset') ;
 	var limit = event.target.getResponseHeader('X-RateLimit-Limit') ;
 	var remaining = event.target.getResponseHeader('X-RateLimit-Remaining') ;
-	reset = new Date( parseInt(reset) * 1000 ).toLocaleFormat() ;
+	reset = new Date( parseInt(reset) * 1000 ).toString() ;
 	limit = parseInt( limit ) ;
 	remaining = parseInt( remaining ) ;
 
