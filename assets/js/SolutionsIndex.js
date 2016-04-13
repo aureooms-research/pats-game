@@ -73,7 +73,7 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 		interpretation.innerText = this.predicate.description( ) ;
 
 		var help = document.createElement('a');
-		help.classList.add( 'help' ) ;
+		help.classList.add( 'no-results-help' ) ;
 		help.href = '#' + encodeURIComponent( JSON.stringify( { q : 'help' } ) ) ;
 		help.innerHTML = '<b>Need help?</b> Click here or type <b class="emph">help</b> in the top left input field.' ;
 
@@ -81,9 +81,9 @@ SolutionsIndex.Query.prototype.update_dom = function ( ) {
 		noresults.classList.add( 'no-results');
 		noresults.appendChild( query ) ;
 		noresults.appendChild( interpretation ) ;
-		noresults.appendChild( help ) ;
 
 		container.appendChild( noresults ) ;
+		container.appendChild( help ) ;
 
 	}
 
