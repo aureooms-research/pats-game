@@ -167,6 +167,14 @@ SolutionsIndex.prototype._query = function ( query , solutions ) {
 			predicate = new Predicate( function ( s ) { return s.best ; } , 'BEST' ) ;
 		}
 
+		else if ( 'square'.indexOf( part ) === 0 ) {
+			predicate = new Predicate( function ( s ) { return s.M === s.N ; } , 'SQUARE' ) ;
+		}
+
+		else if ( 'cube'.indexOf( part ) === 0 ) {
+			predicate = new Predicate( function ( s ) { return s.M === s.N && s.N === s.R ; } , 'CUBE' ) ;
+		}
+
 		else if ( 'unsat'.indexOf( part ) === 0 ) {
 			predicate = new Predicate( function ( s ) { return !s.sat ; } , 'UNSAT' ) ;
 		}
